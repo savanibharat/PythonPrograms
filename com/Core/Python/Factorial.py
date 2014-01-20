@@ -5,7 +5,7 @@ Created on Jan 19, 2014
 '''
 
 temp = 1
-i = 4
+i = input("Enter number for factorial")
 while i > 0:
     temp = temp * i
     i = i - 1
