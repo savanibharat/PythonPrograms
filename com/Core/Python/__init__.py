@@ -1,3 +1,9 @@
+'''
+Created on Jan 19, 2014
+
+@author: Savani Bharat
+'''
+
 print "hello world";
 print("\"hello world\"");
 print(type("\"hello world\""));
@@ -33,5 +39,4 @@ else:
 Bharat Savani
 5
 a>0
-
 """
