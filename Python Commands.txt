@@ -1,0 +1,79 @@
+>>> a=[0,1,2,3,4,5]
+
+>>> a[0:3]
+[0, 1, 2]
+
+>>> a[2:3]
+[2]
+
+>>> a[2:]
+[2, 3, 4, 5]
+
+>>> a[:6]
+[0, 1, 2, 3, 4, 5]
+
+>>> a[:10]
+[0, 1, 2, 3, 4, 5]
+
+>>> a=['apple','grape','pear']
+
+>>> apple in a
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+NameError: name 'apple' is not defined
+
+>>> 'apple' in a
+True
+
+>>> 'kiwi' in a
+False
+
+>>> if 'pear' in a:
+...     print('there is a pear')
+...
+there is a pear
+
+>>> g={'name':"Bharat",'city':"Surat"}
+
+>>> g
+{'city': 'Surat', 'name': 'Bharat'}
+
+>>> g['name']
+'Bharat'
+
+>>> g['name']='Aryan'
+
+>>> g['name']
+'Aryan'
+
+order of keys can be different
+>>> g.keys()
+['city', 'name']
+
+>>> del[g['name']]
+>>> g
+{'city': 'Surat'}
+
+list and dictionaries combined
+>>> a={'name':'Aryan','hobbies':['cycling','writing','stories']}
+
+>>> a
+{'name': 'Aryan', 'hobbies': ['cycling', 'writing', 'stories']}
+
+>>> a['hobbies']
+['cycling', 'writing', 'stories']
+
+>>> a['hobbies'][1]
+'writing'
+
+>>> a['hobbies'][2]
+'stories'
+
+>>> a['hobbies'][0]
+'cycling'
+
+>>> a['hobbies']
+['cycling', 'writing', 'stories', 'swimming']
+
+>>> a
+{'name': 'Aryan', 'hobbies': ['cycling', 'writing', 'stories', 'swimming']}
