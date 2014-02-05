@@ -13,3 +13,12 @@ def home_page():
 
 bottle.debug(True)
 bottle.run(host='localhost',port=8080)
+
+'''
+Welcome Aryan
+
+apple
+banana
+peach
+pear
+'''

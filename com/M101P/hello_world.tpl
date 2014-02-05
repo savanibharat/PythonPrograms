@@ -6,6 +6,8 @@
 <body>
 
 <p>
+Welcome {{username}}
+
 <ul>
 
 %for thing in things:
