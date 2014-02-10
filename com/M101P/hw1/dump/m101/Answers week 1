@@ -1,0 +1,16 @@
+Q1) Now, using the Mongo shell, perform a findone on the collection called hw1 in the database m101. That will return one document. Please provide the value 
+corresponding to the "answer" key from the document returned.
+A1) 42
+
+
+
+Q2)his program will print a numeric answer. Please put just the number into the space below. Note that you will need to get MongoDB installed and the homework
+dataset imported from the previous homework before attempting this problem.
+A2)1815
+
+
+
+Q3)It requires bottle to be installed correctly, your mongodb to be running, and that you have run mongorestore properly. From a different terminal window type 
+the following from the command line: curl http://localhost:8080/hw1/50
+A3)53
+
