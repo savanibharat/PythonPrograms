@@ -1,0 +1,9 @@
+
+Q1)What is the student_id of the lowest exam score above 65?
+A1)22
+
+A2)54
+
+
+Q3)If you got it right, it will provide a validation code for you to enter into the box below
+A3)jkfds9834j98fnm39njf0920fn2
