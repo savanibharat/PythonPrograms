@@ -6,7 +6,9 @@ There are two folders in this repository. (I will add folder for Data Structures
 
 
 ----Core
-    This folder contains basic programs in python done (and doing) from various source.
+    This folder contains basic programs in python done (and doing) from various source.(https://github.com/savanibharat/PythonPrograms/tree/master/com/Core)
+    
+    
     
 
 
