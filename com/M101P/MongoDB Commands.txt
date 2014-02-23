@@ -1,0 +1,1309 @@
+ db.scores.find({"type":"essay"}).pretty()
+db.scores.find().forEach(printjson)
+> for(i=0;i<1000;i++){ names=["exam","essay","quiz"]; for(j=0;j<3;j++){db.scores.insert({"student":i,"type":na
+mes[j],score:Math.round(Math.random()*100)});}}
+--------------------------------------------------------------------------
+both the field in find must be satisfied
+> db.scores.find({"student":19,type:"essay"}).pretty()
+{
+        "_id" : ObjectId("52de3dd16177f5dc6e3bc2a8"),
+        "student" : 19,
+        "type" : "essay",
+        "score" : 99
+}
+>
+
+--------------------------------------------------------------------------
+ 		(--------search criteria---) (------fields to display------)			
+> db.scores.find({"student":19,type:"essay"},{score:true,_id:false}).pretty()
+{ "score" : 99 }
+> db.scores.find({"student":19,type:"essay"},{"score":true,"_id":false}).pretty()
+{ "score" : 99 }
+>
+
+--------------------------------------------------------------------------
+db.scores.find({score:{$gt :99}}).pretty() scores greater than 99 $gt is operator
+--------------------------------------------------------------------------
+score greater an 9 and type is essay
+> db.scores.find({score:{$gt :99},type:"essay"}).pretty()
+{
+        "_id" : ObjectId("52de3dd16177f5dc6e3bc5cf"),
+        "student" : 288,
+        "type" : "essay",
+        "score" : 100
+}
+{
+        "_id" : ObjectId("52de3dd16177f5dc6e3bc6b0"),
+        "student" : 363,
+        "type" : "essay",
+        "score" : 100
+}
+>
+---------------------------------------------------------------------------
+db.scores.find({score:{$gt :65,$lt:70},type:"essay"}).pretty()
+---------------------------------------------------------------------------
+db.scores.find({score:{$gte :65,$lt:70},type:"essay"}).pretty()
+---------------------------------------------------------------------------
+> db.people.find({profession:{$exists:true}}).pretty()
+{
+        "_id" : ObjectId("52de54f16177f5dc6e3bce2c"),
+        "name" : "Smith",
+        "age" : 30,
+        "profession" : "Hacker"
+}
+{
+        "_id" : ObjectId("52de550b6177f5dc6e3bce2d"),
+        "name" : "Jones",
+        "age" : 35,
+        "profession" : "Backer"
+}
+---------------------------------------------------------------------------
+> db.people.find({profession:{$exists:false}}).pretty()
+{ "_id" : ObjectId("52de54a56177f5dc6e3bce26"), "name" : "Alice" }
+{ "_id" : ObjectId("52de54b36177f5dc6e3bce27"), "name" : "Bob" }
+{ "_id" : ObjectId("52de54b76177f5dc6e3bce28"), "name" : "Charlie" }
+{ "_id" : ObjectId("52de54bb6177f5dc6e3bce29"), "name" : "Dave" }
+{ "_id" : ObjectId("52de54c06177f5dc6e3bce2a"), "name" : "Edgar" }
+{ "_id" : ObjectId("52de54c46177f5dc6e3bce2b"), "name" : "Fred" }
+{ "_id" : ObjectId("52de56c46177f5dc6e3bce2e"), "name" : 44 }
+---------------------------------------------------------------------------
+to get data based on datatype http://bsonspec.org/#/specification
+to get all fileds of name types of string
+> db.people.find({name:{$type:2}}).pretty()
+{ "_id" : ObjectId("52de54a56177f5dc6e3bce26"), "name" : "Alice" }
+{ "_id" : ObjectId("52de54b36177f5dc6e3bce27"), "name" : "Bob" }
+{ "_id" : ObjectId("52de54b76177f5dc6e3bce28"), "name" : "Charlie" }
+{ "_id" : ObjectId("52de54bb6177f5dc6e3bce29"), "name" : "Dave" }
+{ "_id" : ObjectId("52de54c06177f5dc6e3bce2a"), "name" : "Edgar" }
+{ "_id" : ObjectId("52de54c46177f5dc6e3bce2b"), "name" : "Fred" }
+{
+        "_id" : ObjectId("52de54f16177f5dc6e3bce2c"),
+        "name" : "Smith",
+        "age" : 30,
+        "profession" : "Hacker"
+}
+{
+        "_id" : ObjectId("52de550b6177f5dc6e3bce2d"),
+        "name" : "Jones",
+        "age" : 35,
+        "profession" : "Backer"
+}
+
+> db.people.find({name:{$type:1}}).pretty()
+{ "_id" : ObjectId("52de56c46177f5dc6e3bce2e"), "name" : 44 }
+---------------------------------------------------------------------------
+regular expression
+> db.people.find({name:{$regex:"a"}})
+{ "_id" : ObjectId("52de54b76177f5dc6e3bce28"), "name" : "Charlie" }
+{ "_id" : ObjectId("52de54bb6177f5dc6e3bce29"), "name" : "Dave" }
+{ "_id" : ObjectId("52de54c06177f5dc6e3bce2a"), "name" : "Edgar" }
+---------------------------------------------------------------------------
+Enter with letter e
+> db.people.find({name:{$regex:"e$"}})
+{ "_id" : ObjectId("52de54a56177f5dc6e3bce26"), "name" : "Alice" }
+{ "_id" : ObjectId("52de54b76177f5dc6e3bce28"), "name" : "Charlie" }
+{ "_id" : ObjectId("52de54bb6177f5dc6e3bce29"), "name" : "Dave" }
+---------------------------------------------------------------------------
+name field that starts with a
+> db.people.find({name:{$regex:"^A"}})
+{ "_id" : ObjectId("52de54a56177f5dc6e3bce26"), "name" : "Alice" }
+---------------------------------------------------------------------------
+$or is prefix operator it comes before the subqueries that will connect together
+It takes input as array
+Be careful with this kind of query as there can be syntax err
+> db.people.find({ $or :[{name:{$regex:"e$"}},{age:{$exists:true}} ]})
+{ "_id" : ObjectId("52de54a56177f5dc6e3bce26"), "name" : "Alice" }
+{ "_id" : ObjectId("52de54b76177f5dc6e3bce28"), "name" : "Charlie" }
+{ "_id" : ObjectId("52de54bb6177f5dc6e3bce29"), "name" : "Dave" }
+{ "_id" : ObjectId("52de54f16177f5dc6e3bce2c"), "name" : "Smith", "age" : 30, "profession" : "Hacker" }
+{ "_id" : ObjectId("52de550b6177f5dc6e3bce2d"), "name" : "Jones", "age" : 35, "profession" : "Backer" }
+---------------------------------------------------------------------------
+and operator
+> db.people.find({$and:[{name:{$gt:"C"}},{name:{$regex:"a"}}]})
+{ "_id" : ObjectId("52de54b76177f5dc6e3bce28"), "name" : "Charlie" }
+{ "_id" : ObjectId("52de54bb6177f5dc6e3bce29"), "name" : "Dave" }
+{ "_id" : ObjectId("52de54c06177f5dc6e3bce2a"), "name" : "Edgar" }
+
+> db.people.find({$and:[{name:{$gt:"A"}},{name:{$regex:"a"}}]})
+{ "_id" : ObjectId("52de54b76177f5dc6e3bce28"), "name" : "Charlie" }
+{ "_id" : ObjectId("52de54bb6177f5dc6e3bce29"), "name" : "Dave" }
+{ "_id" : ObjectId("52de54c06177f5dc6e3bce2a"), "name" : "Edgar" }
+
+below query has same output as above query but below query is better performace wise
+> db.people.find({ name:{$gt:"A",$regex:"a"}})
+{ "_id" : ObjectId("52de54b76177f5dc6e3bce28"), "name" : "Charlie" }
+{ "_id" : ObjectId("52de54bb6177f5dc6e3bce29"), "name" : "Dave" }
+{ "_id" : ObjectId("52de54c06177f5dc6e3bce2a"), "name" : "Edgar" }
+--------------------------------------------------------------------------
+> db.accounts.find().pretty()
+{
+        "_id" : ObjectId("52de657b6177f5dc6e3bce2f"),
+        "name" : "George",
+        "favorites" : [
+                "ice cream",
+                "pretzels"
+        ]
+}
+{
+        "_id" : ObjectId("52de658f6177f5dc6e3bce30"),
+        "name" : "Howard",
+        "favorites" : [
+                "pretzels",
+                "beer"
+        ]
+}
+--------------------------------------------------------------------------
+searching in array
+> db.accounts.find({favorites:"beer"})
+{ "_id" : ObjectId("52de658f6177f5dc6e3bce30"), "name" : "Howard", "favorites" : [  "pretzels",  "beer" ] }
+> db.accounts.find({favorites:"beer"}).pretty()
+{
+        "_id" : ObjectId("52de658f6177f5dc6e3bce30"),
+        "name" : "Howard",
+        "favorites" : [
+                "pretzels",
+                "beer"
+        ]
+}
+> db.accounts.find({favorites:"pretzels"}).pretty()
+{
+        "_id" : ObjectId("52de657b6177f5dc6e3bce2f"),
+        "name" : "George",
+        "favorites" : [
+                "ice cream",
+                "pretzels"
+        ]
+}
+{
+        "_id" : ObjectId("52de658f6177f5dc6e3bce30"),
+        "name" : "Howard",
+        "favorites" : [
+                "pretzels",
+                "beer"
+        ]
+}
+-------------------------------------------------------------------------
+arrays with other operator
+> db.accounts.find({favorites:"pretzels",name:{$gt:"H"}}).pretty()
+{
+        "_id" : ObjectId("52de658f6177f5dc6e3bce30"),
+        "name" : "Howard",
+        "favorites" : [
+                "pretzels",
+                "beer"
+        ]
+}
+-------------------------------------------------------------------------
+match more than one item in all use $all
+> db.accounts.find({favorites:{$all:["pretzels","beer"]}}).pretty()
+{
+        "_id" : ObjectId("52de658f6177f5dc6e3bce30"),
+        "name" : "Howard",
+        "favorites" : [
+                "pretzels",
+                "beer"
+        ]
+}
+{
+        "_id" : ObjectId("52de68ca6177f5dc6e3bce31"),
+        "name" : "Irving",
+        "favorites" : [
+                "pretzels",
+                "beer",
+                "cheese"
+        ]
+}
+order of array does not matter
+> db.accounts.find({favorites:{$all:["beer","pretzels"]}}).pretty()
+{
+        "_id" : ObjectId("52de658f6177f5dc6e3bce30"),
+        "name" : "Howard",
+        "favorites" : [
+                "pretzels",
+                "beer"
+        ]
+}
+{
+        "_id" : ObjectId("52de68ca6177f5dc6e3bce31"),
+        "name" : "Irving",
+        "favorites" : [
+                "pretzels",
+                "beer",
+                "cheese"
+        ]
+}
+--------------------------------------------------------------------------
+Howard and John are in different documents but still in will match them all
+> db.accounts.find({name : {$in:["Howard","John"]}}).pretty()
+{
+        "_id" : ObjectId("52de658f6177f5dc6e3bce30"),
+        "name" : "Howard",
+        "favorites" : [
+                "pretzels",
+                "beer"
+        ]
+}
+{
+        "_id" : ObjectId("52de68d96177f5dc6e3bce32"),
+        "name" : "John",
+        "favorites" : [
+                "beer",
+                "cheese"
+        ]
+}
+-------------------------------------------------------------------------
+> db.accounts.find({favorites : {$in:["beer","pretzels"]}}).pretty()
+{
+        "_id" : ObjectId("52de657b6177f5dc6e3bce2f"),
+        "name" : "George",
+        "favorites" : [
+                "ice cream",
+                "pretzels"
+        ]
+}
+{
+        "_id" : ObjectId("52de658f6177f5dc6e3bce30"),
+        "name" : "Howard",
+        "favorites" : [
+                "pretzels",
+                "beer"
+        ]
+}
+{
+        "_id" : ObjectId("52de68ca6177f5dc6e3bce31"),
+        "name" : "Irving",
+        "favorites" : [
+                "pretzels",
+                "beer",
+                "cheese"
+        ]
+}
+{
+        "_id" : ObjectId("52de68d96177f5dc6e3bce32"),
+        "name" : "John",
+        "favorites" : [
+                "beer",
+                "cheese"
+        ]
+}
+---------------------------------------------------------------------------
+> db.users.find().pretty()
+{
+        "_id" : ObjectId("52ddda816177f5dc6e3bc26d"),
+        "name" : "Aryan",
+        "location" : "Gujarat"
+}
+{
+        "_id" : ObjectId("52ddda5f6177f5dc6e3bc26c"),
+        "name" : "Bharat",
+        "favorite_color" : "white"
+}
+{
+        "_id" : ObjectId("52defaf707310b75f298ee1e"),
+        "name" : "richard",
+        "email" : {
+                "work" : "richard@10gen.com",
+                "personal" : "kreuter@example.com"
+        }
+}
+querying for sub docs remember that you need to preserve the order of
+sub docs see query 1 and 2
+1)> db.users.find({email:{work:"richard@10gen.com",personal:"kreuter@example.com"}}).pretty()
+{
+        "_id" : ObjectId("52defaf707310b75f298ee1e"),
+        "name" : "richard",
+        "email" : {
+                "work" : "richard@10gen.com",
+                "personal" : "kreuter@example.com"
+        }
+}
+2)> db.users.find({email:{personal:"kreuter@example.com",work:"richard@10gen.com"}}).pretty()
+
+how to get sub document if you dont know entire document
+> db.users.find({email.work:"richard@10gen.com"}).pretty()
+Tue Jan 21 15:16:36.098 SyntaxError: Unexpected token .
+> db.users.find({"email.work":"richard@10gen.com"}).pretty()
+{
+        "_id" : ObjectId("52defaf707310b75f298ee1e"),
+        "name" : "richard",
+        "email" : {
+                "work" : "richard@10gen.com",
+                "personal" : "kreuter@example.com"
+        }
+}
+--------------------------------------------------------------------------
+cursor in action
+> cur=db.people.find()
+{ "_id" : ObjectId("52de54a56177f5dc6e3bce26"), "name" : "Alice" }
+{ "_id" : ObjectId("52de54b36177f5dc6e3bce27"), "name" : "Bob" }
+{ "_id" : ObjectId("52de54b76177f5dc6e3bce28"), "name" : "Charlie" }
+{ "_id" : ObjectId("52de54bb6177f5dc6e3bce29"), "name" : "Dave" }
+{ "_id" : ObjectId("52de54c06177f5dc6e3bce2a"), "name" : "Edgar" }
+{ "_id" : ObjectId("52de54c46177f5dc6e3bce2b"), "name" : "Fred" }
+{ "_id" : ObjectId("52de54f16177f5dc6e3bce2c"), "name" : "Smith", "age" : 30, "profession" : "Hacker" }
+{ "_id" : ObjectId("52de550b6177f5dc6e3bce2d"), "name" : "Jones", "age" : 35, "profession" : "Backer" }
+{ "_id" : ObjectId("52de56c46177f5dc6e3bce2e"), "name" : 44 }
+> cur.hasNext()
+false
+> cur=db.people.find();null
+null
+> cur.hasNext()
+true
+> cur.next()
+{ "_id" : ObjectId("52de54a56177f5dc6e3bce26"), "name" : "Alice" }
+> cur.next()
+{ "_id" : ObjectId("52de54b36177f5dc6e3bce27"), "name" : "Bob" }
+> cur.next()
+{ "_id" : ObjectId("52de54b76177f5dc6e3bce28"), "name" : "Charlie" }
+> cur.next()
+{ "_id" : ObjectId("52de54bb6177f5dc6e3bce29"), "name" : "Dave" }
+> cur.next()
+{ "_id" : ObjectId("52de54c06177f5dc6e3bce2a"), "name" : "Edgar" }
+> cur.next()
+{ "_id" : ObjectId("52de54c46177f5dc6e3bce2b"), "name" : "Fred" }
+> cur.next()
+{
+        "_id" : ObjectId("52de54f16177f5dc6e3bce2c"),
+        "name" : "Smith",
+        "age" : 30,
+        "profession" : "Hacker"
+}
+> cur.next()
+{
+        "_id" : ObjectId("52de550b6177f5dc6e3bce2d"),
+        "name" : "Jones",
+        "age" : 35,
+        "profession" : "Backer"
+}
+> cur.next()
+{ "_id" : ObjectId("52de56c46177f5dc6e3bce2e"), "name" : 44 }
+> cur.next()
+Tue Jan 21 15:34:57.720 error hasNext: false at src/mongo/shell/query.js:124
+
+using while loop for cursor
+> cur=db.users.find();null;
+null
+> while(cur.hasNext()) printjson(cur.next());
+{
+        "_id" : ObjectId("52ddda816177f5dc6e3bc26d"),
+        "name" : "Aryan",
+        "location" : "Gujarat"
+}
+{
+        "_id" : ObjectId("52ddda5f6177f5dc6e3bc26c"),
+        "name" : "Bharat",
+        "favorite_color" : "white"
+}
+{
+        "_id" : ObjectId("52defaf707310b75f298ee1e"),
+        "name" : "richard",
+        "email" : {
+                "work" : "richard@10gen.com",
+                "personal" : "kreuter@example.com"
+        }
+}
+Remember once the cursor has travered the documents in collection it becomes null
+so you need to define it again then only it will point to first document again
+
+limit cursor to limited records
+> cur=db.people.find();null;
+null
+> cur.limit(5)
+{ "_id" : ObjectId("52de54a56177f5dc6e3bce26"), "name" : "Alice" }
+{ "_id" : ObjectId("52de54b36177f5dc6e3bce27"), "name" : "Bob" }
+{ "_id" : ObjectId("52de54b76177f5dc6e3bce28"), "name" : "Charlie" }
+{ "_id" : ObjectId("52de54bb6177f5dc6e3bce29"), "name" : "Dave" }
+{ "_id" : ObjectId("52de54c06177f5dc6e3bce2a"), "name" : "Edgar" }
+> cur=db.people.find();null;
+null
+> cur.limit(5);null;
+null
+> while(cur.hasNext()) { printjson(cur.next())}
+{ "_id" : ObjectId("52de54a56177f5dc6e3bce26"), "name" : "Alice" }
+{ "_id" : ObjectId("52de54b36177f5dc6e3bce27"), "name" : "Bob" }
+{ "_id" : ObjectId("52de54b76177f5dc6e3bce28"), "name" : "Charlie" }
+{ "_id" : ObjectId("52de54bb6177f5dc6e3bce29"), "name" : "Dave" }
+{ "_id" : ObjectId("52de54c06177f5dc6e3bce2a"), "name" : "Edgar" }
+
+when u use limit he server will sent only that many records and not all
+
+sort names reversely
+cur.sort({name:-1});null;
+> cur=db.people.find();null;
+null
+> cur.sort({name:-1});null;
+null
+> while(cur.hasNext()){printjson(cur.next())}
+{
+        "_id" : ObjectId("52de54f16177f5dc6e3bce2c"),
+        "name" : "Smith",
+        "age" : 30,
+        "profession" : "Hacker"
+}
+{
+        "_id" : ObjectId("52de550b6177f5dc6e3bce2d"),
+        "name" : "Jones",
+        "age" : 35,
+        "profession" : "Backer"
+}
+{ "_id" : ObjectId("52de54c46177f5dc6e3bce2b"), "name" : "Fred" }
+{ "_id" : ObjectId("52de54c06177f5dc6e3bce2a"), "name" : "Edgar" }
+{ "_id" : ObjectId("52de54bb6177f5dc6e3bce29"), "name" : "Dave" }
+{ "_id" : ObjectId("52de54b76177f5dc6e3bce28"), "name" : "Charlie" }
+{ "_id" : ObjectId("52de54b36177f5dc6e3bce27"), "name" : "Bob" }
+{ "_id" : ObjectId("52de54a56177f5dc6e3bce26"), "name" : "Alice" }
+{ "_id" : ObjectId("52de56c46177f5dc6e3bce2e"), "name" : 44 }
+
+sort and limit the records
+
+> cur=db.people.find();null;
+null
+> cur.sort({name:-1}).limit(5);null;
+null
+> while(cur.hasNext()){printjson(cur.next())}
+{
+        "_id" : ObjectId("52de54f16177f5dc6e3bce2c"),
+        "name" : "Smith",
+        "age" : 30,
+        "profession" : "Hacker"
+}
+{
+        "_id" : ObjectId("52de550b6177f5dc6e3bce2d"),
+        "name" : "Jones",
+        "age" : 35,
+        "profession" : "Backer"
+}
+{ "_id" : ObjectId("52de54c46177f5dc6e3bce2b"), "name" : "Fred" }
+{ "_id" : ObjectId("52de54c06177f5dc6e3bce2a"), "name" : "Edgar" }
+{ "_id" : ObjectId("52de54bb6177f5dc6e3bce29"), "name" : "Dave" }
+
+using limit sort and skip
+execution order if sort then skip then limit
+> cur=db.people.find();null;
+null
+> cur.sort({name:-1}).limit(3).skip(2);null;
+null
+> while(cur.hasNext()){printjson(cur.next())}
+{ "_id" : ObjectId("52de54c46177f5dc6e3bce2b"), "name" : "Fred" }
+{ "_id" : ObjectId("52de54c06177f5dc6e3bce2a"), "name" : "Edgar" }
+{ "_id" : ObjectId("52de54bb6177f5dc6e3bce29"), "name" : "Dave" }
+-----------------------------------------------------------------------
+counting docs
+> db.scores.find({type:"exam"}).count()
+1000
+> db.scores.count()
+3000
+-----------------------------------------------------------------------
+
+update operation
+> db.people.find().pretty()
+{ "_id" : ObjectId("52de54a56177f5dc6e3bce26"), "name" : "Alice" }
+{ "_id" : ObjectId("52de54b36177f5dc6e3bce27"), "name" : "Bob" }
+{ "_id" : ObjectId("52de54b76177f5dc6e3bce28"), "name" : "Charlie" }
+{ "_id" : ObjectId("52de54bb6177f5dc6e3bce29"), "name" : "Dave" }
+{ "_id" : ObjectId("52de54c06177f5dc6e3bce2a"), "name" : "Edgar" }
+{ "_id" : ObjectId("52de54c46177f5dc6e3bce2b"), "name" : "Fred" }
+{
+        "_id" : ObjectId("52de54f16177f5dc6e3bce2c"),
+        "name" : "Smith",
+        "age" : 30,
+        "profession" : "Hacker"
+}
+{
+        "_id" : ObjectId("52de550b6177f5dc6e3bce2d"),
+        "name" : "Jones",
+        "age" : 35,
+        "profession" : "Backer"
+}
+
+> db.people.update({name:"Smith"},{name:"Thompson",salary:50000})
+> db.people.find().pretty()
+{ "_id" : ObjectId("52de54a56177f5dc6e3bce26"), "name" : "Alice" }
+{ "_id" : ObjectId("52de54b36177f5dc6e3bce27"), "name" : "Bob" }
+{ "_id" : ObjectId("52de54b76177f5dc6e3bce28"), "name" : "Charlie" }
+{ "_id" : ObjectId("52de54bb6177f5dc6e3bce29"), "name" : "Dave" }
+{ "_id" : ObjectId("52de54c06177f5dc6e3bce2a"), "name" : "Edgar" }
+{ "_id" : ObjectId("52de54c46177f5dc6e3bce2b"), "name" : "Fred" }
+{
+        "_id" : ObjectId("52de54f16177f5dc6e3bce2c"),
+        "name" : "Thompson",
+        "salary" : 50000
+}
+{
+        "_id" : ObjectId("52de550b6177f5dc6e3bce2d"),
+        "name" : "Jones",
+        "age" : 35,
+        "profession" : "Backer"
+}
+{ "_id" : ObjectId("52de56c46177f5dc6e3bce2e"), "name" : 44 }
+
+update without replacing entire document
+> db.people.update({name:"Alice"},{$set:{age:30} })
+> db.people.find({name:"Alice"})
+{ "_id" : ObjectId("52de54a56177f5dc6e3bce26"), "age" : 30, "name" : "Alice" }
+
+> db.people.update({name:"Alice"},{$inc :{age:1} })
+> db.people.find({name:"Alice"}).pretty()
+{
+        "_id" : ObjectId("52de54a56177f5dc6e3bce26"),
+        "age" : 31,
+        "name" : "Alice"
+}
+what if the value to be incremented does not exists
+> db.people.update({name:"Bob"},{$inc :{age:1} })
+> db.people.find({name:"Bob"}).pretty()
+{ "_id" : ObjectId("52de54b36177f5dc6e3bce27"), "age" : 1, "name" : "Bob" }
+---------------------------------------------------------------------------
+how to unset particular field in document
+> db.people.update({name:"Jones"},{$unset:{profession:1}})
+do same for arrays
+---------------------------------------------------------------------------
+insert arrays and do operations on them
+> db.arrays.insert({_id:0,a:[1,2,3,4,5]})
+> db.arrays.find()
+{ "_id" : 0, "a" : [  1,  2,  3,  4,  5 ] }
+update value in array with index 2 and position 3
+> db.arrays.update({_id:0},{$set:{"a.2":5}} )
+> db.arrays.find().forEach(printjson)
+{ "_id" : 0, "a" : [ 1, 2, 5, 4, 5 ] }
+
+push element means insert element at end of array
+> db.arrays.update({_id:0},{$push:{a:6}})
+> db.arrays.find().forEach(printjson)
+{ "_id" : 0, "a" : [ 1, 2, 5, 4, 5, 6 ] }
+{ "_id" : 0, "a" : [ 1, 2, 5, 4, 5, 6 ] }
+> db.arrays.update({_id:0},{$push:{a:1}})
+> db.arrays.find().forEach(printjson)
+{ "_id" : 0, "a" : [ 1, 2, 5, 4, 5, 6, 1 ] }
+> db.arrays.update({_id:0},{$push:{a:90}})
+> db.arrays.find().forEach(printjson)
+{ "_id" : 0, "a" : [ 1, 2, 5, 4, 5, 6, 1, 90 ] }
+
+> db.arrays.update({_id:0},{$pop:{a:90}})
+> db.arrays.find().forEach(printjson)
+{ "_id" : 0, "a" : [ 1, 2, 5, 4, 5, 6, 1 ] }
+
+pop from begining of array
+> db.arrays.update({_id:0},{$pop:{a:-1}})
+> db.arrays.find().forEach(printjson)
+{ "_id" : 0, "a" : [ 2, 5, 4, 5, 6, 1 ] }
+
+pushAll method
+
+> db.arrays.update({_id:0},{$pushAll:{a:[96,98,91,82]}})
+> db.arrays.find().forEach(printjson)
+{
+        "_id" : 0,
+        "a" : [
+                2,
+                5,
+                4,
+                5,
+                6,
+                1,
+                96,
+                98,
+                91,
+                82
+        ]
+}
+pull 
+> db.arrays.update({_id:0},{$pull:{a:82}})
+> db.arrays.find().forEach(printjson)
+{ "_id" : 0, "a" : [ 2, 5, 4, 5, 6, 1, 96, 98, 91 ] }
+
+pullAll
+> db.arrays.update({_id:0},{$pullAll:{a:[96,97,91,5]}})
+> db.arrays.find().forEach(printjson)
+{ "_id" : 0, "a" : [ 2, 4, 6, 1, 98 ] }
+
+addToSet
+> db.arrays.update({_id:0},{$addToSet:{a:5}})
+> db.arrays.find().forEach(printjson)
+{ "_id" : 0, "a" : [ 2, 4, 6, 1, 98, 5 ] }
+> db.arrays.update({_id:0},{$addToSet:{a:5}})
+> db.arrays.update({_id:0},{$addToSet:{a:5}})
+> db.arrays.update({_id:0},{$addToSet:{a:5}})
+> db.arrays.find().forEach(printjson)
+{ "_id" : 0, "a" : [ 2, 4, 6, 1, 98, 5 ] }
+----------------------------------------------------------------------
+multi update
+yielding is done in multi update
+So when the data set is been updated for instance 3 docs are updated and then 
+some other request can update some docs then the thread will again continue with
+its update then again another process can update and so on can go on
+MongoDB does not offer isolated transaction 
+
+> db.people.update({},{$set:{title:"Dr"}},{multi:true})
+> db.people.find().pretty()
+{
+        "_id" : ObjectId("52de54f16177f5dc6e3bce2c"),
+        "name" : "Thompson",
+        "salary" : 50000,
+        "title" : "Dr"
+}
+{
+        "_id" : ObjectId("52de550b6177f5dc6e3bce2d"),
+        "age" : 35,
+        "name" : "Jones",
+        "title" : "Dr"
+}
+{
+        "_id" : ObjectId("52de54b76177f5dc6e3bce28"),
+        "name" : "Charlie",
+        "title" : "Dr"
+}
+{
+        "_id" : ObjectId("52de54bb6177f5dc6e3bce29"),
+        "name" : "Dave",
+        "title" : "Dr"
+}
+{
+        "_id" : ObjectId("52de54c06177f5dc6e3bce2a"),
+        "name" : "Edgar",
+        "title" : "Dr"
+}
+{
+        "_id" : ObjectId("52de54c46177f5dc6e3bce2b"),
+        "name" : "Fred",
+        "title" : "Dr"
+}
+{
+        "_id" : ObjectId("52de56c46177f5dc6e3bce2e"),
+        "name" : 44,
+        "title" : "Dr"
+}
+{
+        "_id" : ObjectId("52de54a56177f5dc6e3bce26"),
+        "age" : 31,
+        "name" : "Alice",
+        "title" : "Dr"
+}
+{
+        "_id" : ObjectId("52de54b36177f5dc6e3bce27"),
+        "age" : 1,
+        "name" : "Bob",
+        "title" : "Dr"
+}
+{
+        "_id" : ObjectId("52df7c2507310b75f298ee1f"),
+        "age" : 40,
+        "name" : "George",
+        "title" : "Dr"
+}
+{
+        "_id" : ObjectId("52df7c3b07310b75f298ee20"),
+        "name" : "William",
+        "title" : "Dr"
+}
+How would you give every record whose score was less than 70 an extra 20 points?
+db.scores.update( { score : { $lt: 70 } } , { $inc : { score : 20 } } , { multi : true } );
+----------------------------------------------------------------------------
+remove operation
+> db.people.remove({name:"Alice"})
+> db.people.find()
+{ "_id" : ObjectId("52de54f16177f5dc6e3bce2c"), "name" : "Thompson", "salary" : 50000, "title" : "Dr" }
+{ "_id" : ObjectId("52de550b6177f5dc6e3bce2d"), "age" : 35, "name" : "Jones", "title" : "Dr" }
+{ "_id" : ObjectId("52de54b76177f5dc6e3bce28"), "name" : "Charlie", "title" : "Dr" }
+{ "_id" : ObjectId("52de54bb6177f5dc6e3bce29"), "name" : "Dave", "title" : "Dr" }
+{ "_id" : ObjectId("52de54c06177f5dc6e3bce2a"), "name" : "Edgar", "title" : "Dr" }
+{ "_id" : ObjectId("52de54c46177f5dc6e3bce2b"), "name" : "Fred", "title" : "Dr" }
+{ "_id" : ObjectId("52de56c46177f5dc6e3bce2e"), "name" : 44, "title" : "Dr" }
+{ "_id" : ObjectId("52de54b36177f5dc6e3bce27"), "age" : 1, "name" : "Bob", "title" : "Dr" }
+{ "_id" : ObjectId("52df7c2507310b75f298ee1f"), "age" : 40, "name" : "George", "title" : "Dr" }
+{ "_id" : ObjectId("52df7c3b07310b75f298ee20"), "name" : "William", "title" : "Dr" }
+
+> db.people.remove({name:{$gt:"M"}}
+... )
+> db.people.find()
+{ "_id" : ObjectId("52de550b6177f5dc6e3bce2d"), "age" : 35, "name" : "Jones", "title" : "Dr" }
+{ "_id" : ObjectId("52de54b76177f5dc6e3bce28"), "name" : "Charlie", "title" : "Dr" }
+{ "_id" : ObjectId("52de54bb6177f5dc6e3bce29"), "name" : "Dave", "title" : "Dr" }
+{ "_id" : ObjectId("52de54c06177f5dc6e3bce2a"), "name" : "Edgar", "title" : "Dr" }
+{ "_id" : ObjectId("52de54c46177f5dc6e3bce2b"), "name" : "Fred", "title" : "Dr" }
+{ "_id" : ObjectId("52de56c46177f5dc6e3bce2e"), "name" : 44, "title" : "Dr" }
+{ "_id" : ObjectId("52de54b36177f5dc6e3bce27"), "age" : 1, "name" : "Bob", "title" : "Dr" }
+{ "_id" : ObjectId("52df7c2507310b75f298ee1f"), "age" : 40, "name" : "George", "title" : "Dr" }
+
+db.people.remove()-this will remove all the documents one by one until no documents are left
+but index are not removed
+db.people.drop()-this will free up large space of data structure stored, index are also dropped
+so drop is better than remove
+----------------------------------------------------------------------------
+
+> db.people.update({},{$set:{title:"Dr"}},{multi:true})
+> db.runCommand({getLastError:1})
+{
+        "updatedExisting" : true,
+        "n" : 8,//means 8 docs were affected
+        "connectionId" : 1,
+        "err" : null,
+        "ok" : 1
+}
+> db.people.update({name:"Thompson"},{$set:{title:"Dr"}},{upsert:true});
+> db.runCommand({getLastError:1})
+{
+        "updatedExisting" : false,//no doc were found that were in search criteria
+        "upserted" : ObjectId("52df842d57843412d05c4135"),
+        "n" : 1,//one doc got upserted
+        "connectionId" : 1,
+        "err" : null,
+        "ok" : 1
+}
+-------------------------------------------------------------------------------
+indexing
+> db.bbb.insert({a:1,b:2})
+> db.bbb.find().pretty()
+{ "_id" : ObjectId("52e4bf45c7cb70d6c2dc2e6a"), "a" : 1, "b" : 2 }
+> db.bbb.ensureIndex({a:1,b:2})
+> db.bbb.getIndexes()
+[
+        {
+                "v" : 1,
+                "key" : {
+                        "_id" : 1
+                },
+                "ns" : "course.bbb",
+                "name" : "_id_"
+        },
+        {
+                "v" : 1,
+                "key" : {
+                        "a" : 1,
+                        "b" : 2
+                },
+                "ns" : "course.bbb",
+                "name" : "a_1_b_2"
+        }
+]
+> db.bbb.insert({a:[1,2,3],b:2})
+> db.bbb.find().pretty()
+{ "_id" : ObjectId("52e4bf45c7cb70d6c2dc2e6a"), "a" : 1, "b" : 2 }
+{
+        "_id" : ObjectId("52e4c1a3c7cb70d6c2dc2e6c"),
+        "a" : [
+                1,
+                2,
+                3
+        ],
+        "b" : 2
+}
+> db.bbb.ensureIndex({a:1,b:[100,101,102]})
+{
+        "err" : "bad index key pattern { a: 1.0, b: [ 100.0, 101.0, 102.0 ] }",
+        "code" : 10098,
+        "n" : 0,
+        "connectionId" : 1,
+        "ok" : 1
+}
+> db.bbb.insert({a:1,b:[100,200,300]})
+> db.bbb.find().pretty()
+{ "_id" : ObjectId("52e4bf45c7cb70d6c2dc2e6a"), "a" : 1, "b" : 2 }
+{
+        "_id" : ObjectId("52e4c1a3c7cb70d6c2dc2e6c"),
+        "a" : [
+                1,
+                2,
+                3
+        ],
+        "b" : 2
+}
+{
+        "_id" : ObjectId("52e4c1dbc7cb70d6c2dc2e6e"),
+        "a" : 1,
+        "b" : [
+                100,
+                200,
+                300
+        ]
+}
+> db.bbb.getInddexes()
+Sun Jan 26 00:06:09.116 TypeError: Property 'getInddexes' of object course.bbb is not a function
+
+
+> db.bbb.getIndexes()
+[
+        {
+                "v" : 1,
+                "key" : {
+                        "_id" : 1
+                },
+                "ns" : "course.bbb",
+                "name" : "_id_"
+        },
+        {
+                "v" : 1,
+                "key" : {
+                        "a" : 1,
+                        "b" : 2
+                },
+                "ns" : "course.bbb",
+                "name" : "a_1_b_2"
+        }
+]
+-------------------------------------------------------------------------------
+> db.things.insert({"things":"pear","color":"red"})
+> db.things.find()
+{ "_id" : ObjectId("52e4cea2c7cb70d6c2dc2e6f"), "things" : "pear", "color" : "red" }
+> db.things.insert({"things":"pear","color":"white"})
+> db.things.insert({"things":"apple","color":"white"})
+> db.things.find()
+{ "_id" : ObjectId("52e4cea2c7cb70d6c2dc2e6f"), "things" : "pear", "color" : "red" }
+{ "_id" : ObjectId("52e4ceb9c7cb70d6c2dc2e70"), "things" : "pear", "color" : "white" }
+{ "_id" : ObjectId("52e4cebec7cb70d6c2dc2e71"), "things" : "apple", "color" : "white" }
+> db.things.ensureIndex({things:1},{unique:true})
+{
+        "err" : "E11000 duplicate key error index: course.things.$things_1  dup key: { : \"pear\" }",
+        "code" : 11000,
+        "n" : 0,
+        "connectionId" : 1,
+        "ok" : 1
+}
+> db.things.ensureIndex({things:1},{unique:true,dropDups:true})
+> db.things.find()
+{ "_id" : ObjectId("52e4cea2c7cb70d6c2dc2e6f"), "things" : "pear", "color" : "red" }
+{ "_id" : ObjectId("52e4cebec7cb70d6c2dc2e71"), "things" : "apple", "color" : "white" }
+> db.things.find().pretty()
+{
+        "_id" : ObjectId("52e4cea2c7cb70d6c2dc2e6f"),
+        "things" : "pear",
+        "color" : "red"
+}
+{
+        "_id" : ObjectId("52e4cebec7cb70d6c2dc2e71"),
+        "things" : "apple",
+        "color" : "white"
+}
+> db.things.getIndexes()
+[
+        {
+                "v" : 1,
+                "key" : {
+                        "_id" : 1
+                },
+                "ns" : "course.things",
+                "name" : "_id_"
+        },
+        {
+                "v" : 1,
+                "key" : {
+                        "things" : 1
+                },
+                "unique" : true,
+                "ns" : "course.things",
+                "name" : "things_1",
+                "dropDups" : true
+        }
+]
+-----------------------------------------------------------------------------------
+> db.things.find({"things":"pear"})
+{ "_id" : ObjectId("52e4cea2c7cb70d6c2dc2e6f"), "things" : "pear", "color" : "red" }
+
+cursor type is Btree as the indexing is done on things field
+isMultiKey -- false because there is no array in index
+nscanned -- 1 means we directly found that data
+indexOnly -- 
+
+> db.things.find({"things":"pear"}).explain()
+{
+        "cursor" : "BtreeCursor things_1",
+        "isMultiKey" : false,
+        "n" : 1,
+        "nscannedObjects" : 1,
+        "nscanned" : 1,
+        "nscannedObjectsAllPlans" : 1,
+        "nscannedAllPlans" : 1,
+        "scanAndOrder" : false,
+        "indexOnly" : false,
+        "nYields" : 0,
+        "nChunkSkips" : 0,
+        "millis" : 0,
+        "indexBounds" : {
+                "things" : [
+                        [
+                                "pear",
+                                "pear"
+                        ]
+                ]
+        },
+        "server" : "SavaniBharat:27017"
+}
+Index not used as indexing is done on things and not on color
+> db.things.find({"color":"red"}).explain()
+{
+        "cursor" : "BasicCursor",
+        "isMultiKey" : false,
+        "n" : 1,
+        "nscannedObjects" : 2,
+        "nscanned" : 2,
+        "nscannedObjectsAllPlans" : 2,
+        "nscannedAllPlans" : 2,
+        "scanAndOrder" : false,
+        "indexOnly" : false,
+        "nYields" : 0,
+        "nChunkSkips" : 0,
+        "millis" : 0,
+        "indexBounds" : {
+
+        },
+        "server" : "SavaniBharat:27017"
+}
+-----------------------------------------------------------------
+> db.scores.count()
+3000
+
+avgObjSize-72 bytes
+storageSize-0.664MB
+
+> db.scores.stats()
+{
+        "ns" : "course.scores",
+        "count" : 3000,
+        "size" : 216008,
+        "avgObjSize" : 72.00266666666667,
+        "storageSize" : 696320,
+        "numExtents" : 4,
+        "nindexes" : 1,
+        "lastExtentSize" : 524288,
+        "paddingFactor" : 1,
+        "systemFlags" : 1,
+        "userFlags" : 0,
+        "totalIndexSize" : 106288,
+        "indexSizes" : {
+                "_id_" : 106288
+        },
+        "ok" : 1
+}
+Index size - 0.101 MB
+> db.scores.totalIndexSize()
+106288
+> db.scores.getIndexes()
+[
+        {
+                "v" : 1,
+                "key" : {
+                        "_id" : 1
+                },
+                "ns" : "course.scores",
+                "name" : "_id_"
+        }
+]
+
+
+> db.scores.find({student:0,type:"exam"})
+{ "_id" : ObjectId("52de3dd16177f5dc6e3bc26e"), "student" : 0, "type" : "exam", "score" : 94 }
+> db.scores.find({student:0,type:"exam"}).explain()
+{
+        "cursor" : "BasicCursor",
+        "isMultiKey" : false,
+        "n" : 1,
+        "nscannedObjects" : 3000,
+        "nscanned" : 3000,
+        "nscannedObjectsAllPlans" : 3000,
+        "nscannedAllPlans" : 3000,
+        "scanAndOrder" : false,
+        "indexOnly" : false,
+        "nYields" : 0,
+        "nChunkSkips" : 0,
+        "millis" : 3,
+        "indexBounds" : {
+
+        },
+        "server" : "SavaniBharat:27017"
+}
+
+> db.scores.find({student:0,type:"exam"}).hint({$natural:1}).explain()
+{
+        "cursor" : "BasicCursor",
+        "isMultiKey" : false,
+        "n" : 1,
+        "nscannedObjects" : 3000,
+        "nscanned" : 3000,
+        "nscannedObjectsAllPlans" : 3000,
+        "nscannedAllPlans" : 3000,
+        "scanAndOrder" : false,
+        "indexOnly" : false,
+        "nYields" : 0,
+        "nChunkSkips" : 0,
+        "millis" : 3,
+        "indexBounds" : {
+
+        },
+        "server" : "SavaniBharat:27017"
+}
+------------------------------------------------------------------------------------------
+> db.stores.insert({"name":"Rubys","type":"Barber","location":[40,74]})
+> db.stores.find()
+{ "_id" : ObjectId("52fb126e4beaef12923e82b6"), "name" : "Rubys", "type" : "Barber", "location" : [  40,  74 ]
+ }
+> db.stores.insert({"name":"ACE hardware","type":"Hardware","location":[40.232,-74.373]})
+> db.stores.insert({"name":"Trickle Candy","type":"Food","location":[40.232,-75.343]})
+> db.stores.find().pretty()
+{
+        "_id" : ObjectId("52fb126e4beaef12923e82b6"),
+        "name" : "Rubys",
+        "type" : "Barber",
+        "location" : [
+                40,
+                74
+        ]
+}
+{
+        "_id" : ObjectId("52fb12b94beaef12923e82b7"),
+        "name" : "ACE hardware",
+        "type" : "Hardware",
+        "location" : [
+                40.232,
+                -74.373
+        ]
+}
+{
+        "_id" : ObjectId("52fb12dd4beaef12923e82b8"),
+        "name" : "Trickle Candy",
+        "type" : "Food",
+        "location" : [
+                40.232,
+                -75.343
+        ]
+}
+
+> db.stores.ensureIndex({"location":"2d",type:1})
+> db.stores.getIndexes()
+[
+        {
+                "v" : 1,
+                "key" : {
+                        "_id" : 1
+                },
+                "ns" : "course.stores",
+                "name" : "_id_"
+        },
+        {
+                "v" : 1,
+                "key" : {
+                        "location" : "2d",
+                        "type" : 1
+                },
+                "ns" : "course.stores",
+                "name" : "location_2d_type_1"
+        }
+]
+
+GeoSpatial Index 2D
+
+	|
+   -,+	|   +,+
+________|________
+   -,-	|   +,-
+	|
+	|
+
+
+> db.stores.find({"location":{"$near":[50,50]}}).pretty()
+{
+        "_id" : ObjectId("52fb126e4beaef12923e82b6"),
+        "name" : "Rubys",
+        "type" : "Barber",
+        "location" : [
+                40,
+                74
+        ]
+}
+{
+        "_id" : ObjectId("52fb12b94beaef12923e82b7"),
+        "name" : "ACE hardware",
+        "type" : "Hardware",
+        "location" : [
+                40.232,
+                -74.373
+        ]
+}
+{
+        "_id" : ObjectId("52fb12dd4beaef12923e82b8"),
+        "name" : "Trickle Candy",
+        "type" : "Food",
+        "location" : [
+                40.232,
+                -75.343
+        ]
+}
+
+> db.stores.find({"location":{"$near":[1000,1000]}}).pretty()
+error: {
+        "$err" : "point not in interval of [ -180, 180 ] :: caused by :: { 0: 1000.0, 1: 1000.0 }",
+        "code" : 16433
+}
+
+Suppose you have a 2D geospatial index defined on the key location in the collection places. Write a query that will 
+find the closest three places (the closest three documents) to the location 74, 140.
+
+db.places.find({"location":{"$near":[74,140]}}).limit(3)
+
+-----------------------------------------------------------------------------------------------------------------
+Geospacial Spherical
+> db.runCommand({geoNear:"stores",near:[50,50],spherical:true, maxDistance:1})
+{
+        "ns" : "course.stores",
+        "near" : "1100110000001111110000001111110000001111110000001111",
+        "results" : [
+                {
+                        "dis" : 0.4254484117584905,
+                        "obj" : {
+                                "_id" : ObjectId("52fb126e4beaef12923e82b6"),
+                                "name" : "Rubys",
+                                "type" : "Barber",
+                                "location" : [
+                                        40,
+                                        74
+                                ]
+                        }
+                }
+        ],
+        "stats" : {
+                "time" : 41,
+                "btreelocs" : 0,
+                "nscanned" : 3,
+                "objectsLoaded" : 1,
+                "avgDistance" : 0.4254484117584905,
+                "maxDistance" : 0.42544860556639313
+        },
+        "ok" : 1
+}
+
+> db.runCommand({geoNear:"stores",near:[50,50],spherical:true, maxDistance:3})
+{
+        "ns" : "course.stores",
+        "near" : "1100110000001111110000001111110000001111110000001111",
+        "results" : [
+                {
+                        "dis" : 0.4254484117584905,
+                        "obj" : {
+                                "_id" : ObjectId("52fb126e4beaef12923e82b6"),
+                                "name" : "Rubys",
+                                "type" : "Barber",
+                                "location" : [
+                                        40,
+                                        74
+                                ]
+                        }
+                },
+                {
+                        "dis" : 2.173762779893763,
+                        "obj" : {
+                                "_id" : ObjectId("52fb12b94beaef12923e82b7"),
+                                "name" : "ACE hardware",
+                                "type" : "Hardware",
+                                "location" : [
+                                        40.232,
+                                        -74.373
+                                ]
+                        }
+                },
+                {
+                        "dis" : 2.190541659436427,
+                        "obj" : {
+                                "_id" : ObjectId("52fb12dd4beaef12923e82b8"),
+                                "name" : "Trickle Candy",
+                                "type" : "Food",
+                                "location" : [
+                                        40.232,
+                                        -75.343
+                                ]
+                        }
+                }
+        ],
+        "stats" : {
+                "time" : 0,
+                "btreelocs" : 0,
+                "nscanned" : 3,
+                "objectsLoaded" : 3,
+                "avgDistance" : 1.5965842836962267,
+                "maxDistance" : 2.190542002686998
+        },
+        "ok" : 1
+}
+
+Write the query to look in the system profile collection for all queries that took longer than one second, ordered by 
+timestamp descending.
+
+db.system.profile.find({millis:{$gt:1000}}).sort({ts:-1})
+
+----------------------------------------------------------------------------------------------------------------------
+mongostat
+C:\Users\Savani Bharat>mongostat
+connected to: 127.0.0.1
+insert  query update delete getmore command flushes mapped  vsize    res faults  locked db idx miss %     qr|q
+w   ar|aw  netIn netOut  conn       time
+    *0     *0     *0     *0       0     1|0       0   448m  1.02g    46m      1  test:0.0%          0       0|
+0     0|0    62b     3k     1   00:20:26
+    *0     *0     *0     *0       0     1|0       0   448m  1.02g    46m      0  test:0.0%          0       0|
+0     0|0    62b     3k     1   00:20:27
+    *0     *0     *0     *0       0     1|0       0   448m  1.02g    46m      0  test:0.0%          0       0|
+0     0|0    62b     3k     1   00:20:28
+    *0     *0     *0     *0       0     1|0       0   448m  1.02g    46m      0  test:0.0%          0       0|
+0     0|0    62b     3k     1   00:20:29
+    *0     *0     *0     *0       0     1|0       0   448m  1.02g    46m      0  test:0.0%          0       0|
+0     0|0    62b     3k     1   00:20:30
+    *0     *0     *0     *0       0     1|0       0   448m  1.02g    46m      0  test:0.0%          0       0|
+0     0|0    62b     3k     1   00:20:31
+    *0     *0     *0     *0       0     1|0       0   448m  1.02g    46m      0  test:0.0%          0       0|
+0     0|0    62b     3k     1   00:20:32
+^C
+---------------------------------------------------------------------------
+> db.students.insert({"_id":0,"name":"Andrew","teachers":[0,1]})
+>
+>
+>
+> db.students.insert({"_id":1,"name":"Richard","teachers":[0,1,3]})
+>
+>
+>
+> db.students.insert({"_id":2,"name":"Eliot","teachers":[1,2,3]})
+> db.students.insert({"_id":3,"name":"Mark","teachers":[0,3]})
+> db.teachers.insert({"_id":0,"name":"Mark"})
+> db.teachers.insert({"_id":1,"name":"John"})
+> db.teachers.insert({"_id":2,"name":"Bruce"})
+> db.teachers.insert({"_id":3,"name":"James"})
+> db.students.find().prettY()
+
+> db.students.find().pretty()
+{ "_id" : 0, "name" : "Andrew", "teachers" : [ 0, 1 ] }
+{ "_id" : 1, "name" : "Richard", "teachers" : [ 0, 1, 3 ] }
+{ "_id" : 2, "name" : "Eliot", "teachers" : [ 1, 2, 3 ] }
+{ "_id" : 3, "name" : "Mark", "teachers" : [ 0, 3 ] }
+> db.teachers().find().pretty()
+
+> db.teachers.find().pretty()
+{ "_id" : 0, "name" : "Mark" }
+{ "_id" : 1, "name" : "John" }
+{ "_id" : 2, "name" : "Bruce" }
+{ "_id" : 3, "name" : "James" }
+
+> db.students.find({'teachers':{'$all':[1,3]}})
+{ "_id" : 1, "name" : "Richard", "teachers" : [  0,  1,  3 ] }
+{ "_id" : 2, "name" : "Eliot", "teachers" : [  1,  2,  3 ] }
+
+> db.students.find({'teachers':{'$all':[1,3]}}).explain()
+{
+        "cursor" : "BtreeCursor teachers_1",
+        "isMultiKey" : true,
+        "n" : 2,
+        "nscannedObjects" : 3,
+        "nscanned" : 3,
+        "nscannedObjectsAllPlans" : 3,
+        "nscannedAllPlans" : 3,
+        "scanAndOrder" : false,
+        "indexOnly" : false,
+        "nYields" : 0,
+        "nChunkSkips" : 0,
+        "millis" : 0,
+        "indexBounds" : {
+                "teachers" : [
+                        [
+                                1,
+                                1
+                        ]
+                ]
+        },
+        "server" : "SavaniBharat:27017"
+}
