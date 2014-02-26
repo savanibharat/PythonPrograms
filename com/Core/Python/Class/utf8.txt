@@ -1,0 +1,4 @@
+This is a file.
+utf8.txt
+2   ¾       ðð
+idzie wąż wąską dróżką
