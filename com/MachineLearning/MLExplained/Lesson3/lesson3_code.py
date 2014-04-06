@@ -1,5 +1,5 @@
 from math import log, sqrt
-from porter import PorterStemmer
+#from porter import PorterStemmer
 
 #read in positive and negative lines from files, and stopwords (useless words)
 poslines= open(r'rt-polarity.pos', 'r').read().splitlines()
